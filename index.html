@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Onroad RC Simulator</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Free RC touring car simulator for Mac: 1/10 electric touring car on carpet, real motor and ESC settings, racing line, ghost, autopilot and opponent.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans:wght@400;500;600&family=Saira+Semi+Condensed:wght@600;700&display=swap">
+<style>
+/* Layout: „pit board“ – úvod s tabulí časů, snímek z trati s pruhem ideální stopy, pak obsah v jednom sloupci 68rem */
+:root {
+  --bg: #eceeea;          /* betonová podlaha haly */
+  --surface: #ffffff;
+  --ink: #1b1e1b;
+  --muted: #5a5f58;
+  --rule: #c9ccc4;
+  --tape: #3f7d45;        /* zelená páska dělicího pásu */
+  --wood: #9c7a45;        /* dřevěný mantinel */
+  --cta-bg: #24272a;
+  --cta-fg: #f1e3a6;
+  --board-bg: #24272a;
+  --board-fg: #eef0ea;
+  --board-dim: #9fa59b;
+  --board-time: #f1e3a6;
+  --line-go: #3fae55;     /* ideální stopa: plyn */
+  --line-limit: #e9c43c;  /* hranice přilnavosti */
+  --line-brake: #d8463a;  /* brzda */
+  --font-display: "Saira Semi Condensed", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+  --font-body: "IBM Plex Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #1c1e1c; --surface: #262926; --ink: #ecede7; --muted: #a3a89d; --rule: #3a3e39;
+    --tape: #6db36f; --wood: #c9a26b; --cta-bg: #e8d58f; --cta-fg: #1c1e1c;
+    --board-bg: #111311; --board-fg: #eef0ea; --board-dim: #8d9389; --board-time: #e8d58f; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #1c1e1c; --surface: #262926; --ink: #ecede7; --muted: #a3a89d; --rule: #3a3e39;
+  --tape: #6db36f; --wood: #c9a26b; --cta-bg: #e8d58f; --cta-fg: #1c1e1c;
+  --board-bg: #111311; --board-fg: #eef0ea; --board-dim: #8d9389; --board-time: #e8d58f; color-scheme: dark;
+}
+:root[data-lang="cs"] [lang="en"], :root[data-lang="en"] [lang="cs"] { display: none !important; }
+
+body { margin: 0; background: var(--bg); color: var(--ink); font: 400 1.0625rem/1.6 var(--font-body); }
+img { max-width: 100%; }
+.wrap { max-width: 68rem; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+a { color: var(--tape); text-underline-offset: 0.18em; }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--line-limit); outline-offset: 3px; border-radius: 4px; }
+h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; line-height: 1.1; margin: 0; }
+h2 { font-size: clamp(1.7rem, 3.2vw, 2.3rem); letter-spacing: 0.01em; }
+p { margin: 0; }
+
+/* hlavička */
+.top { padding-block: 18px; }
+.top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.mark { font: 700 1rem/1 var(--font-display); letter-spacing: 0.14em; text-transform: uppercase; }
+.mark span { color: var(--tape); }
+.lang { display: flex; border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; }
+.lang button { font: 600 0.8rem/1 var(--font-body); letter-spacing: 0.08em; padding: 8px 12px; border: 0; background: transparent; color: var(--muted); cursor: pointer; }
+.lang button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+
+/* úvod */
+.hero { padding-block: clamp(24px, 5vw, 56px) 28px; }
+.hero .wrap { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 56px); align-items: end; }
+.eyebrow { font: 600 0.8rem/1.2 var(--font-body); letter-spacing: 0.14em; text-transform: uppercase; color: var(--tape); margin-bottom: 14px; }
+.hero h1 { font-size: clamp(2.6rem, 7vw, 4.6rem); font-weight: 700; letter-spacing: -0.005em; }
+.lead { margin-top: 18px; max-width: 34rem; color: var(--muted); font-size: 1.15rem; }
+.actions { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; margin-top: 28px; }
+.cta { display: inline-flex; align-items: center; gap: 10px; background: var(--cta-bg); color: var(--cta-fg); text-decoration: none; font: 600 1.05rem/1 var(--font-body); padding: 16px 22px; border-radius: 8px; }
+.cta:hover { filter: brightness(1.08); }
+.cta svg { width: 18px; height: 18px; }
+.facts { margin-top: 16px; color: var(--muted); font-size: 0.92rem; }
+
+/* tabule časů */
+.board { background: var(--board-bg); color: var(--board-fg); border-radius: 10px; padding: 20px 22px 18px; font-family: var(--font-mono); }
+.board h3 { font: 600 0.78rem/1.3 var(--font-body); letter-spacing: 0.14em; text-transform: uppercase; color: var(--board-dim); margin-bottom: 10px; }
+.board table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.board td { padding: 9px 0; border-top: 1px solid color-mix(in srgb, var(--board-dim) 30%, transparent); font-size: 1rem; }
+.board td.t { text-align: right; font-size: 1.45rem; color: var(--board-time); }
+.board td.t small { font-size: 0.85rem; color: var(--board-dim); margin-left: 2px; }
+.board .note { margin-top: 10px; font: 400 0.8rem/1.45 var(--font-body); color: var(--board-dim); }
+
+/* snímek s ideální stopou */
+.shot { margin: 0; }
+.shot img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 10px 10px 0 0; }
+.racing-line { height: 8px; border-radius: 0 0 10px 10px; background: linear-gradient(90deg, var(--line-go) 0 38%, var(--line-limit) 52%, var(--line-brake) 66%, var(--line-limit) 78%, var(--line-go) 90%); }
+.shot figcaption { margin-top: 10px; font-size: 0.88rem; color: var(--muted); }
+.legend { display: inline-flex; gap: 14px; margin-left: 6px; flex-wrap: wrap; }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
+
+section { padding-block: clamp(40px, 7vw, 80px); }
+section + section { border-top: 1px solid var(--rule); }
+
+/* co hra umí */
+.features { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 30px 48px; margin-top: 32px; }
+.features h3 { font-size: 1.3rem; margin-bottom: 8px; display: flex; align-items: baseline; gap: 10px; }
+.features h3::before { content: ""; width: 14px; height: 4px; border-radius: 2px; background: var(--tape); flex: none; transform: translateY(-5px); }
+.features p { color: var(--muted); max-width: 32rem; }
+.unit { font-family: var(--font-mono); font-size: 0.92em; color: var(--ink); white-space: nowrap; }
+
+/* galerie */
+.gallery { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; margin-top: 32px; }
+.gallery figure { margin: 0; min-width: 0; }
+.gallery img { display: block; width: 100%; height: auto; border-radius: 8px; border: 1px solid var(--rule); }
+.gallery figcaption { margin-top: 10px; font-size: 0.92rem; color: var(--muted); }
+
+/* instalace */
+.install { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 40px; margin-top: 32px; align-items: start; }
+.steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 22px; counter-reset: step; }
+.steps li { counter-increment: step; display: grid; grid-template-columns: 2.4rem minmax(0, 1fr); gap: 4px 14px; }
+.steps li::before { content: counter(step); font: 700 1.5rem/1.2 var(--font-display); color: var(--tape); grid-row: span 2; }
+.steps strong { font-weight: 600; }
+.steps p { color: var(--muted); }
+.cmd { margin-top: 10px; display: flex; gap: 8px; align-items: stretch; min-width: 0; }
+.cmd code { flex: 1; min-width: 0; overflow-x: auto; white-space: nowrap; background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 10px 12px; font: 500 0.85rem/1.4 var(--font-mono); }
+.cmd button { flex: none; border: 1px solid var(--rule); background: var(--surface); color: var(--ink); border-radius: 6px; padding: 0 12px; font: 500 0.85rem/1 var(--font-body); cursor: pointer; }
+.req { background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; padding: 22px 24px; }
+.req h3 { font-size: 1.15rem; margin-bottom: 12px; }
+.req dl { margin: 0; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 8px 16px; font-size: 0.95rem; }
+.req dt { color: var(--muted); }
+.req dd { margin: 0; }
+
+/* podpora a patička */
+.support { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 40px; align-items: center; }
+.support p { color: var(--muted); margin-top: 12px; max-width: 36rem; }
+.support .links { display: grid; gap: 12px; justify-items: start; }
+.btn-line { display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--ink); color: var(--ink); text-decoration: none; border-radius: 8px; padding: 12px 18px; font-weight: 600; }
+.placeholder { font-size: 0.85rem; color: var(--muted); border: 1px dashed var(--rule); border-radius: 8px; padding: 10px 14px; }
+footer { border-top: 1px solid var(--rule); padding-block: 28px 40px; color: var(--muted); font-size: 0.9rem; }
+footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; }
+
+@media (max-width: 860px) {
+  .hero .wrap, .install, .support { grid-template-columns: minmax(0, 1fr); }
+  .features, .gallery { grid-template-columns: minmax(0, 1fr); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .cta { transition: filter 0.15s ease; }
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <div class="mark">Onroad <span>RC</span> Simulator</div>
+    <div class="lang" role="group" aria-label="Jazyk / Language">
+      <button type="button" id="lang-cs" data-set="cs" aria-pressed="false">CZ</button>
+      <button type="button" id="lang-en" data-set="en" aria-pressed="false">EN</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="hero">
+    <div class="wrap">
+      <div>
+        <p class="eyebrow"><span lang="cs">RC simulátor pro Mac · zdarma</span><span lang="en">RC simulator for Mac · free</span></p>
+        <h1>Onroad RC Simulator</h1>
+        <p class="lead">
+          <span lang="cs">Elektrický touring car 1/10 na kobercové trati. Motor a regulátor podle katalogu, setup jako na skutečném autě a vysílačka přes USB.</span>
+          <span lang="en">An electric 1/10 touring car on a carpet track. Motor and ESC from catalogue data, a setup like on the real car, and your own transmitter over USB.</span>
+        </p>
+        <div class="actions">
+          <a class="cta" id="download" href="https://github.com/ibb-jile/onroad-rc-simulator/releases/latest/download/Onroad-RC-Simulator-macOS.zip">
+            <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 3v10m0 0l-4-4m4 4l4-4M4 16h12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span lang="cs">Stáhnout pro Mac</span><span lang="en">Download for Mac</span>
+          </a>
+          <a href="#install"><span lang="cs">Jak nainstalovat</span><span lang="en">How to install</span></a>
+        </div>
+        <p class="facts"><span lang="cs">Verze 0.32 · macOS 13 a novější · Mac s čipem Apple (M1 a novější) · zip 66 MB</span><span lang="en">Version 0.32 · macOS 13 or later · Mac with Apple silicon (M1 or later) · 66 MB zip</span></p>
+      </div>
+      <aside class="board" aria-label="Lap times">
+        <h3><span lang="cs">Autopilot · nejlepší kolo</span><span lang="en">Autopilot · best lap</span></h3>
+        <table>
+          <tr><td><span lang="cs">Nákres 8 × 6</span><span lang="en">Sketch 8 × 6</span></td><td class="t">18.63<small>s</small></td></tr>
+          <tr><td>Rychvald</td><td class="t">21.36<small>s</small></td></tr>
+          <tr><td>Jedovnice</td><td class="t">17.67<small>s</small></td></tr>
+        </table>
+        <p class="note"><span lang="cs">Výchozí setup: motor 17.5T, převod 4.5, koberec 26.4 × 19.8 m. Dokážeš být rychlejší?</span><span lang="en">Default setup: 17.5T motor, 4.5 ratio, 26.4 × 19.8 m carpet. Can you beat it?</span></p>
+      </aside>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <figure class="shot">
+      <img src="img/chase.jpg" width="1600" height="900" alt="Red touring car on a carpet track following a racing line colored green, yellow and red">
+      <div class="racing-line" aria-hidden="true"></div>
+      <figcaption>
+        <span lang="cs">Ideální stopa na koberci:</span><span lang="en">Racing line on the carpet:</span>
+        <span class="legend">
+          <span><i style="background: var(--line-go)"></i><span lang="cs">plný plyn</span><span lang="en">full throttle</span></span>
+          <span><i style="background: var(--line-limit)"></i><span lang="cs">na hranici přilnavosti</span><span lang="en">at the grip limit</span></span>
+          <span><i style="background: var(--line-brake)"></i><span lang="cs">brzda</span><span lang="en">brake</span></span>
+        </span>
+      </figcaption>
+    </figure>
+  </div>
+
+  <section>
+    <div class="wrap">
+      <h2><span lang="cs">Co v něm najdeš</span><span lang="en">What's inside</span></h2>
+      <div class="features">
+        <div>
+          <h3><span lang="cs">Fyzika auta</span><span lang="en">Car physics</span></h3>
+          <p><span lang="cs">Project Chrono s krokem <span class="unit">1/1200 s</span>: zavěšení s dvojitými rameny, náklon, přenos váhy, flexe podvozku, přední spool a pneumatiky naladěné na koberec. Auto se při chybě roztočí, jako to skutečné.</span><span lang="en">Project Chrono with a <span class="unit">1/1200 s</span> step: double-wishbone suspension, roll, weight transfer, chassis flex, front spool and tires tuned for carpet. Make a mistake and the car spins, just like the real one.</span></p>
+        </div>
+        <div>
+          <h3><span lang="cs">Motor, regulátor, baterie</span><span lang="en">Motor, ESC, battery</span></h3>
+          <p><span lang="cs">Sensored brushless motory <span class="unit">21.5T / 17.5T / 13.5T</span> podle katalogových hodnot, regulátor s menu jako závodní blinky (drag brake, punch, max. brzda, neutrál) a 2S LiPo <span class="unit">6000 mAh</span>, která se vybíjí a motor hřeje.</span><span lang="en">Sensored brushless motors <span class="unit">21.5T / 17.5T / 13.5T</span> from catalogue values, an ESC menu like a racing blinky ESC (drag brake, punch, max brake, neutral range) and a 2S LiPo <span class="unit">6000 mAh</span> that drains while the motor heats up.</span></p>
+        </div>
+        <div>
+          <h3><span lang="cs">Setup jako v depu</span><span lang="en">Setup like in the pits</span></h3>
+          <p><span lang="cs">28 parametrů: výška, propad, příklon, sbíhavost, pružiny, tlumení, stabilizátory, váha, Ackermann, desky podvozku a převod. U každého je nápověda a schéma; nastavení si uložíš jako variantu a pošleš kamarádovi.</span><span lang="en">28 parameters: ride height, droop, camber, toe, springs, damping, anti-roll bars, weight, Ackermann, chassis plates and gear ratio. Each has a description and a diagram; save a setup as a file and send it to a friend.</span></p>
+        </div>
+        <div>
+          <h3><span lang="cs">Tratě z hal</span><span lang="en">Tracks from real halls</span></h3>
+          <p><span lang="cs">Tři kobercové tratě <span class="unit">26.4 × 19.8 m</span> s dělicími pásy, poklicemi a terči: Nákres 8 × 6, Rychvald a Jedovnice. Časomíra měří kola na milisekundy.</span><span lang="en">Three carpet tracks <span class="unit">26.4 × 19.8 m</span> with dividers, dots and apex markers: Sketch 8 × 6, Rychvald and Jedovnice. Lap timing to the millisecond.</span></p>
+        </div>
+        <div>
+          <h3><span lang="cs">Trénink</span><span lang="en">Practice tools</span></h3>
+          <p><span lang="cs">Duch tvého nejlepšího kola, ideální stopa obarvená podle plynu a brzdy, autopilot s tvým setupem a soupeř, který se učí hranici přilnavosti. Traťový komisař tě po nehodě vrátí na trať.</span><span lang="en">A ghost of your best lap, a racing line colored by throttle and brake, an autopilot with your setup and an opponent that learns the grip limit. A track marshal puts you back on track after a crash.</span></p>
+        </div>
+        <div>
+          <h3><span lang="cs">Tvoje vysílačka</span><span lang="en">Your transmitter</span></h3>
+          <p><span lang="cs">Vysílačka přes USB adaptér s kalibrací a dual rate, nebo klávesnice. Hra je česky a anglicky a nic neodesílá: žádné účty ani reklamy.</span><span lang="en">Use your transmitter through a USB adapter with calibration and dual rate, or the keyboard. The game is in English and Czech and sends nothing: no accounts, no ads.</span></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <h2><span lang="cs">Jak to vypadá</span><span lang="en">Screenshots</span></h2>
+      <div class="gallery">
+        <figure>
+          <img src="img/racing-line.jpg" width="1600" height="900" loading="lazy" alt="View from the driver stand onto a sweeping corner with the racing line">
+          <figcaption><span lang="cs">Pohled z pódia řidičů: autopilot jede po ideální stopě.</span><span lang="en">From the driver stand: the autopilot follows the racing line.</span></figcaption>
+        </figure>
+        <figure>
+          <img src="img/track-top.jpg" width="1150" height="870" loading="lazy" alt="Top view of the Sketch 8 × 6 carpet track with dividers, dots and apex markers">
+          <figcaption><span lang="cs">Trať Nákres 8 × 6 shora: dělicí pásy, poklice a terče.</span><span lang="en">The Sketch 8 × 6 track from above: dividers, dots and apex markers.</span></figcaption>
+        </figure>
+        <figure>
+          <img src="img/setup-esc.jpg" width="1600" height="900" loading="lazy" alt="Car setup dialog with ESC settings and a throttle and brake graph">
+          <figcaption><span lang="cs">Regulátor: graf plynu a brzdy, maximálka a od jaké rychlosti brzda zamyká kola.</span><span lang="en">ESC: throttle and brake curve, top speed, and the speed above which the brake locks the wheels.</span></figcaption>
+        </figure>
+        <figure>
+          <img src="img/setup-chassis.jpg" width="1600" height="900" loading="lazy" alt="Chassis setup dialog with a top view of the car and front and rear axle diagrams">
+          <figcaption><span lang="cs">Podvozek: každá změna je vidět ve schématu auta.</span><span lang="en">Chassis: every change shows up in the car diagram.</span></figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section id="install">
+    <div class="wrap">
+      <h2><span lang="cs">Instalace</span><span lang="en">Installation</span></h2>
+      <div class="install">
+        <ol class="steps">
+          <li>
+            <strong><span lang="cs">Stáhni a rozbal zip</span><span lang="en">Download and unzip</span></strong>
+            <p><span lang="cs">Dvojklik na stažený zip. Vedle aplikace je soubor LICENSES.txt s licencemi všech součástí.</span><span lang="en">Double-click the downloaded zip. Next to the app you will find LICENSES.txt with the licenses of all components.</span></p>
+          </li>
+          <li>
+            <strong><span lang="cs">Přesuň aplikaci do složky Aplikace</span><span lang="en">Move the app to Applications</span></strong>
+            <p><span lang="cs">Onroad RC Simulator.app přetáhni do složky Aplikace.</span><span lang="en">Drag Onroad RC Simulator.app into the Applications folder.</span></p>
+          </li>
+          <li>
+            <strong><span lang="cs">Povol první spuštění</span><span lang="en">Allow the first launch</span></strong>
+            <p><span lang="cs">Aplikace zatím nemá podpis Apple, takže ji macOS napoprvé zablokuje. Otevři Nastavení systému › Soukromí a zabezpečení a klikni na „Přesto otevřít“. Nebo spusť v Terminálu:</span><span lang="en">The app is not signed by Apple yet, so macOS blocks the first launch. Open System Settings › Privacy &amp; Security and click “Open Anyway”. Or run this in Terminal:</span></p>
+            <div class="cmd">
+              <code id="xattr">xattr -dr com.apple.quarantine "/Applications/Onroad RC Simulator.app"</code>
+              <button type="button" id="copy"><span lang="cs">Kopírovat</span><span lang="en">Copy</span></button>
+            </div>
+          </li>
+          <li>
+            <strong><span lang="cs">Připoj vysílačku</span><span lang="en">Connect your transmitter</span></strong>
+            <p><span lang="cs">Vysílačku připoj přes USB adaptér pro simulátory a v menu (Esc) zvol Kalibrace vysílačky. Bez vysílačky řídíš šipkami.</span><span lang="en">Connect the transmitter through a USB simulator adapter and choose Calibrate transmitter in the menu (Esc). Without one, steer with the arrow keys.</span></p>
+          </li>
+        </ol>
+        <aside class="req">
+          <h3><span lang="cs">Požadavky</span><span lang="en">Requirements</span></h3>
+          <dl>
+            <dt><span lang="cs">Mac</span><span lang="en">Mac</span></dt><dd><span lang="cs">čip Apple M1 a novější</span><span lang="en">Apple M1 or later</span></dd>
+            <dt><span lang="cs">Systém</span><span lang="en">System</span></dt><dd>macOS 13 Ventura <span lang="cs">a novější</span><span lang="en">or later</span></dd>
+            <dt><span lang="cs">Místo</span><span lang="en">Disk</span></dt><dd><span lang="cs">asi 200 MB</span><span lang="en">about 200 MB</span></dd>
+            <dt><span lang="cs">Ovládání</span><span lang="en">Controls</span></dt><dd><span lang="cs">RC vysílačka přes USB, nebo klávesnice</span><span lang="en">RC transmitter over USB, or keyboard</span></dd>
+          </dl>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap support">
+      <div>
+        <h2><span lang="cs">Hra je zdarma</span><span lang="en">The game is free</span></h2>
+        <p><span lang="cs">Když tě baví a chceš podpořit další tratě a vývoj, můžeš přispět libovolnou částkou. Chybu nebo nápad napiš na GitHub.</span><span lang="en">If you enjoy it and want to support more tracks and development, you can chip in any amount. Report bugs and ideas on GitHub.</span></p>
+      </div>
+      <div class="links">
+        <p class="placeholder"><span lang="cs">Možnost přispět brzy přidáme.</span><span lang="en">A way to chip in is coming soon.</span></p>
+        <a class="btn-line" href="https://github.com/ibb-jile/onroad-rc-simulator/issues"><span lang="cs">Nahlásit chybu nebo nápad</span><span lang="en">Report a bug or idea</span></a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 Jiří Leták · Onroad RC Simulator</span>
+    <span><span lang="cs">Postaveno na Godot Engine a Project Chrono. Hra neodesílá žádná data.</span><span lang="en">Built with Godot Engine and Project Chrono. The game sends no data.</span></span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  function saved() { try { return localStorage.getItem("lang"); } catch (e) { return null; } }
+  function remember(l) { try { localStorage.setItem("lang", l); } catch (e) {} }
+  function setLang(l) {
+    root.setAttribute("data-lang", l);
+    root.setAttribute("lang", l);
+    document.querySelectorAll(".lang button").forEach(function (b) {
+      b.setAttribute("aria-pressed", String(b.getAttribute("data-set") === l));
+    });
+  }
+  var nav = (navigator.language || "en").toLowerCase();
+  setLang(saved() || (nav.indexOf("cs") === 0 || nav.indexOf("sk") === 0 ? "cs" : "en"));
+  document.querySelectorAll(".lang button").forEach(function (b) {
+    b.addEventListener("click", function () { var l = b.getAttribute("data-set"); setLang(l); remember(l); });
+  });
+  var copy = document.getElementById("copy");
+  copy.addEventListener("click", function () {
+    var text = document.getElementById("xattr").textContent;
+    function done() { copy.querySelectorAll("span").forEach(function (s) { s.textContent = s.lang === "cs" ? "Zkopírováno" : "Copied"; }); }
+    function select() { var r = document.createRange(); r.selectNodeContents(document.getElementById("xattr")); var s = getSelection(); s.removeAllRanges(); s.addRange(r); }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done, select);
+    } else { select(); }
+  });
+})();
+</script>
+</body>
+</html>
