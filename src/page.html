@@ -123,7 +123,13 @@ section + section { border-top: 1px solid var(--rule); }
 /* podpora a patička */
 .support { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 40px; align-items: center; }
 .support p { color: var(--muted); margin-top: 12px; max-width: 36rem; }
-.support .links { display: grid; gap: 12px; justify-items: start; }
+.support .gh { margin-top: 20px; }
+.donate { display: grid; gap: 10px; justify-items: center; text-align: center; }
+.donate img { width: 220px; height: 220px; background: #fff; padding: 8px; border-radius: 8px; border: 1px solid var(--rule); }
+.donate .amounts { display: flex; gap: 8px; }
+.donate .amounts button { font: 600 0.95rem/1 var(--font-body); padding: 10px 14px; border-radius: 8px; border: 1px solid var(--ink); background: transparent; color: var(--ink); cursor: pointer; }
+.donate .amounts button[aria-pressed="true"] { background: var(--cta-bg); color: var(--cta-fg); border-color: var(--cta-bg); }
+.donate .acct { font-variant-numeric: tabular-nums; }
 .btn-line { display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--ink); color: var(--ink); text-decoration: none; border-radius: 8px; padding: 12px 18px; font-weight: 600; }
 footer { border-top: 1px solid var(--rule); padding-block: 28px 40px; color: var(--muted); font-size: 0.9rem; }
 footer a { color: inherit; text-underline-offset: 3px; }
@@ -319,11 +325,18 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: s
     <div class="wrap support">
       <div>
         <h2><span lang="cs">Hra je zdarma</span><span lang="en">The game is free</span></h2>
-        <p><span lang="cs">Stáhni si ji a jezdi. Když tě baví a chceš podpořit další tratě a vývoj, můžeš přispět libovolnou částkou na Ko-fi. Chybu nebo nápad napiš na GitHub.</span><span lang="en">Download it and drive. If you enjoy it and want to support more tracks and development, you can chip in any amount on Ko-fi. Report bugs and ideas on GitHub.</span></p>
+        <p><span lang="cs">Stáhni si ji a jezdi. Když tě baví a chceš podpořit další tratě a vývoj, můžeš přispět převodem na účet: stačí naskenovat QR kód v aplikaci banky, částku jde změnit. Chybu nebo nápad napiš na GitHub.</span><span lang="en">Download it and drive. If you enjoy it and want to support more tracks and development, you can chip in with a bank transfer: Czech and Slovak banking apps scan the QR code, from abroad use the IBAN below. Report bugs and ideas on GitHub.</span></p>
+        <a class="btn-line gh" href="https://github.com/ibb-jile/onroad-rc-simulator/issues"><span lang="cs">Nahlásit chybu nebo nápad</span><span lang="en">Report a bug or idea</span></a>
       </div>
-      <div class="links">
-        <a class="cta" id="kofi" href="https://ko-fi.com/jiriletak" rel="noopener"><span lang="cs">Podpořit na Ko-fi</span><span lang="en">Support on Ko-fi</span></a>
-        <a class="btn-line" href="https://github.com/ibb-jile/onroad-rc-simulator/issues"><span lang="cs">Nahlásit chybu nebo nápad</span><span lang="en">Report a bug or idea</span></a>
+      <div class="donate" id="prispevek">
+        <div class="amounts" role="group" aria-label="Částka / Amount">
+          <button type="button" data-qr="100" aria-pressed="false">100 Kč</button>
+          <button type="button" data-qr="200" aria-pressed="true">200 Kč</button>
+          <button type="button" data-qr="500" aria-pressed="false">500 Kč</button>
+        </div>
+        <img id="qr" src="img/qr-200.svg" width="220" height="220" alt="QR Platba – Onroad RC Simulator">
+        <p class="facts"><span lang="cs">QR Platba · zpráva „Onroad RC Simulator“</span><span lang="en">Czech QR payment · message “Onroad RC Simulator”</span></p>
+        <p class="facts acct">2841944013/3030 · Air Bank<br>IBAN CZ92 3030 0000 0028 4194 4013<br>BIC AIRACZPP</p>
       </div>
     </div>
   </section>
@@ -331,7 +344,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: s
 
 <footer>
   <div class="wrap">
-    <span>© 2026 Jiří Leták · Onroad RC Simulator · <a href="https://ko-fi.com/jiriletak" rel="noopener"><span lang="cs">Podpořit na Ko-fi</span><span lang="en">Support on Ko-fi</span></a></span>
+    <span>© 2026 Jiří Leták · Onroad RC Simulator · <a href="#prispevek"><span lang="cs">Přispět</span><span lang="en">Chip in</span></a></span>
     <span><span lang="cs">Postaveno na Godot Engine a Project Chrono. Hra neodesílá žádná data.</span><span lang="en">Built with Godot Engine and Project Chrono. The game sends no data.</span></span>
   </div>
 </footer>
@@ -352,6 +365,13 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: s
   setLang(saved() || (nav.indexOf("cs") === 0 || nav.indexOf("sk") === 0 ? "cs" : "en"));
   document.querySelectorAll(".lang button").forEach(function (b) {
     b.addEventListener("click", function () { var l = b.getAttribute("data-set"); setLang(l); remember(l); });
+  });
+  var qr = document.getElementById("qr");
+  document.querySelectorAll(".amounts button").forEach(function (b) {
+    b.addEventListener("click", function () {
+      qr.src = "img/qr-" + b.getAttribute("data-qr") + ".svg";
+      document.querySelectorAll(".amounts button").forEach(function (o) { o.setAttribute("aria-pressed", String(o === b)); });
+    });
   });
   var copy = document.getElementById("copy");
   copy.addEventListener("click", function () {
