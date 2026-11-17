@@ -182,8 +182,8 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: s
           <a class="btn-line" id="download-win" href="https://github.com/ibb-jile/onroad-rc-simulator/releases/latest/download/Onroad-RC-Simulator-Windows.zip"><span lang="cs">Windows (experimentální)</span><span lang="en">Windows (experimental)</span></a>
           <a href="#install"><span lang="cs">Jak nainstalovat</span><span lang="en">How to install</span></a>
         </div>
-        <p class="facts"><span lang="cs">Verze 0.50 · macOS 13 a novější · Mac s čipem Apple (M1 a novější) · zip 66 MB</span><span lang="en">Version 0.50 · macOS 13 or later · Mac with Apple silicon (M1 or later) · 66 MB zip</span></p>
-        <p class="facts"><span lang="cs">Windows 10 a 11 (64bit) · první sestavení, na skutečném PC zatím nevyzkoušené · zip 49 MB</span><span lang="en">Windows 10 and 11 (64-bit) · first build, not yet tried on a real PC · 49 MB zip</span></p>
+        <p class="facts"><span lang="cs">Verze 0.51 · macOS 13 a novější · Mac s čipem Apple (M1 a novější) · zip 69 MB</span><span lang="en">Version 0.51 · macOS 13 or later · Mac with Apple silicon (M1 or later) · 69 MB zip</span></p>
+        <p class="facts"><span lang="cs">Windows 10 a 11 (64bit) · první sestavení, na skutečném PC zatím nevyzkoušené · zip 52 MB</span><span lang="en">Windows 10 and 11 (64-bit) · first build, not yet tried on a real PC · 52 MB zip</span></p>
       </div>
       <aside class="board" aria-label="Lap times">
         <h3><span lang="cs">Autopilot · nejlepší kolo</span><span lang="en">Autopilot · best lap</span></h3>
@@ -195,6 +195,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: s
           <tr><td><span lang="cs">Blansko (venkovní)</span><span lang="en">Blansko (outdoor)</span></td><td class="t">12.33<small>s</small></td></tr>
         </table>
         <p class="note"><span lang="cs">Výchozí setup: motor 17.5T, převod 4.5, koberec 26.4 × 19.8 m. Dokážeš být rychlejší?</span><span lang="en">Default setup: 17.5T motor, 4.5 ratio, 26.4 × 19.8 m carpet. Can you beat it?</span></p>
+        <p class="note"><span lang="cs">Časy jsou s plnou fyzikou, s ní byly změřené.</span><span lang="en">Times are with the full physics, which is what they were measured with.</span></p>
       </aside>
     </div>
   </div>
@@ -220,7 +221,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: s
       <div class="features">
         <div>
           <h3><span lang="cs">Fyzika auta</span><span lang="en">Car physics</span></h3>
-          <p><span lang="cs">Project Chrono s krokem <span class="unit">1/1200 s</span>: zavěšení s dvojitými rameny, náklon, přenos váhy, flexe podvozku, přední spool a pneumatiky naladěné na koberec. Auto se při chybě roztočí, jako to skutečné. Pro slabší počítače nebo soupeře jde zvolit zjednodušenou fyziku, která počítá asi stokrát rychleji.</span><span lang="en">Project Chrono with a <span class="unit">1/1200 s</span> step: double-wishbone suspension, roll, weight transfer, chassis flex, front spool and tires tuned for carpet. Make a mistake and the car spins, just like the real one. For slower computers or the opponent you can switch to simplified physics, which runs about a hundred times faster.</span></p>
+          <p><span lang="cs">Project Chrono s krokem <span class="unit">1/1200 s</span>: zavěšení s dvojitými rameny, náklon, přenos váhy, flexe podvozku, přední spool a pneumatiky naladěné na koberec. Auto se při chybě roztočí, jako to skutečné. Ve výchozím stavu hra běží se zjednodušenou fyzikou, která počítá rychleji; plnou, přesnější fyziku (zná poklice, nízké pásy a flexi podvozku) zapneš v menu › Fyzika.</span><span lang="en">Project Chrono with a <span class="unit">1/1200 s</span> step: double-wishbone suspension, roll, weight transfer, chassis flex, front spool and tires tuned for carpet. Make a mistake and the car spins, just like the real one. By default the game runs simplified physics, which is faster to compute; you switch to the full, more accurate physics (it knows the dots, low dividers and chassis flex) in the menu › Physics.</span></p>
         </div>
         <div>
           <h3><span lang="cs">Motor, regulátor, baterie</span><span lang="en">Motor, ESC, battery</span></h3>
@@ -279,12 +280,16 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: s
           <figcaption><span lang="cs">Tribuna v Blansku: budova s krytou plošinou řidičů v patře a schodištěm na boku.</span><span lang="en">The Blansko stand: a building with a covered driver platform upstairs and a staircase on the side.</span></figcaption>
         </figure>
         <figure>
-          <img src="img/setup-esc.jpg" width="1600" height="900" loading="lazy" alt="Car setup dialog with ESC settings and a throttle and brake graph">
-          <figcaption><span lang="cs">Regulátor: graf plynu a brzdy, maximálka a od jaké rychlosti brzda zamyká kola.</span><span lang="en">ESC: throttle and brake curve, top speed, and the speed above which the brake locks the wheels.</span></figcaption>
+          <img src="img/setup-esc.jpg" width="1600" height="900" loading="lazy" alt="Car setup dialog, Drive and ESC tab: motor cards, gear ratio, throttle and brake curve and ESC menu settings">
+          <figcaption><span lang="cs">Pohon a regulátor: motor jako karty, převod, graf plynu a brzdy a menu regulátoru jako na skutečném ESC. Změny proti uložené variantě jsou žlutě.</span><span lang="en">Drive and ESC: motors as cards, gear ratio, throttle and brake curve and the ESC menu like on a real one. Changes from the saved variant are yellow.</span></figcaption>
         </figure>
         <figure>
-          <img src="img/setup-chassis.jpg" width="1600" height="900" loading="lazy" alt="Chassis setup dialog with a top view of the car and front and rear axle diagrams">
-          <figcaption><span lang="cs">Podvozek: každá změna je vidět ve schématu auta.</span><span lang="en">Chassis: every change shows up in the car diagram.</span></figcaption>
+          <img src="img/setup-chassis.jpg" width="1600" height="900" loading="lazy" alt="Chassis setup dialog with parameters in groups, front and rear axle side by side, and a top view of the car with axle diagrams">
+          <figcaption><span lang="cs">Podvozek: parametry ve skupinách, přední a zadní náprava vedle sebe a každá změna je vidět ve schématu auta.</span><span lang="en">Chassis: parameters in groups, front and rear axle side by side, and every change shows up in the car diagram.</span></figcaption>
+        </figure>
+        <figure>
+          <img src="img/tracks.jpg" width="1600" height="900" loading="lazy" alt="Track picker with a list of tracks with thumbnails, a hall and outdoor filter, search and a plan of the selected track">
+          <figcaption><span lang="cs">Výběr trati: seznam s plánky, filtr hala a venkovní, hledání a náhled vybrané trati.</span><span lang="en">Track picker: a list with plans, a hall and outdoor filter, search and a preview of the selected track.</span></figcaption>
         </figure>
       </div>
     </div>
