@@ -138,6 +138,7 @@ p { margin: 0; }
 
 /* snímek s ideální stopou */
 .shot { margin: clamp(24px, 4vw, 44px) 0 0; }
+.shot video { display: block; width: 100%; max-width: 100%; height: auto; aspect-ratio: 16 / 9; background: #000; border-radius: 12px 12px 0 0; }
 .shot img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 12px 12px 0 0; }
 .racing-line { height: 10px; border-radius: 0 0 12px 12px; background: linear-gradient(90deg, var(--line-go) 0 38%, var(--line-limit) 52%, var(--line-brake) 66%, var(--line-limit) 78%, var(--line-go) 90%); }
 .shot figcaption { margin-top: 10px; font-size: 0.88rem; color: var(--muted); }
@@ -247,8 +248,8 @@ footer .logo-sm { flex-basis: 100%; }
           <a class="btn-line" id="download-win" href="https://github.com/ibb-jile/onroad-rc-simulator/releases/latest/download/Onroad-RC-Simulator-Windows.zip"><span lang="cs">Windows (experimentální)</span><span lang="en">Windows (experimental)</span></a>
           <a href="#install"><span lang="cs">Jak nainstalovat</span><span lang="en">How to install</span></a>
         </div>
-        <p class="facts"><span lang="cs">Verze 0.62 · macOS 13 a novější · Mac s čipem Apple (M1 a novější) · zip 69 MB</span><span lang="en">Version 0.62 · macOS 13 or later · Mac with Apple silicon (M1 or later) · 69 MB zip</span></p>
-        <p class="facts"><span lang="cs">Windows 10 a 11 (64bit) · první sestavení, na skutečném PC zatím nevyzkoušené · zip 52 MB</span><span lang="en">Windows 10 and 11 (64-bit) · first build, not yet tried on a real PC · 52 MB zip</span></p>
+        <p class="facts"><span lang="cs">Verze 0.64 · macOS 13 a novější · Mac s čipem Apple (M1 a novější) · zip 70 MB</span><span lang="en">Version 0.64 · macOS 13 or later · Mac with Apple silicon (M1 or later) · 70 MB zip</span></p>
+        <p class="facts"><span lang="cs">Windows 10 a 11 (64bit) · první sestavení, na skutečném PC zatím nevyzkoušené · zip 53 MB</span><span lang="en">Windows 10 and 11 (64-bit) · first build, not yet tried on a real PC · 53 MB zip</span></p>
       </div>
       <aside class="board" aria-label="Lap times">
         <span class="strip" aria-hidden="true"><i></i><i></i><i></i></span>
@@ -268,9 +269,12 @@ footer .logo-sm { flex-basis: 100%; }
 
   <div class="wrap">
     <figure class="shot">
-      <img src="img/race-grid.jpg" width="1600" height="900" alt="Low view along the starting grid in the hall: a blue touring car in its box in the foreground, the other cars lined up in a row in the distance, the countdown number 6 on screen and the results panel on the right">
+      <video controls playsinline preload="none" poster="img/race-intro-poster.jpg" width="1280" height="720" aria-label="Video of the final's start in the hall: the camera flies over the grid of ten cars, the announcer counts down, the siren sounds and the cars pull away">
+        <source src="video/race-intro.mp4" type="video/mp4">
+        <span lang="cs">Váš prohlížeč video nepřehraje. <a href="video/race-intro.mp4">Stáhnout video (MP4)</a>.</span><span lang="en">Your browser cannot play this video. <a href="video/race-intro.mp4">Download the video (MP4)</a>.</span>
+      </video>
       <div class="racing-line" aria-hidden="true"></div>
-      <figcaption><span lang="cs">Finále: deset aut na roštu při odpočtu hlasatele.</span><span lang="en">The final: ten cars on the grid during the announcer's countdown.</span></figcaption>
+      <figcaption><span lang="cs">Start finále: průlet kamery nad roštem, odpočet hlasatele, houkačka a rozjezd. Se zvukem.</span><span lang="en">The start of the final: a camera flight over the grid, the announcer's countdown, the siren and the cars pulling away. With sound.</span></figcaption>
     </figure>
   </div>
 
@@ -309,7 +313,7 @@ footer .logo-sm { flex-basis: 100%; }
         </div>
         <div>
           <h3><span lang="cs">Soutěžní jízda</span><span lang="en">Race mode</span></h3>
-          <p><span lang="cs">Z menu „Závod…“ spustíš kvalifikaci (auta startují po jednom po vyvolání, tvůj čas se měří od průjezdu cílem) a finále (start z roštu, penalizace za ulitý start) na 1, 3 nebo 5 minut, s pořadím během jízdy a výsledky; pole tvoří soupeři. Místa startu jsou podle skutečných závodů: kvalifikace z fronty před měřicí smyčkou, finále z roštu v jedné řadě přes nejdelší rovinku. Finále startuje hlasem: hlasatel odpočítá „deset … čtyři“, pak je 3 až 6 sekund ticho a zazní siréna (česky nebo anglicky podle jazyka hry).</span><span lang="en">From the "Race…" menu you can run qualifying (cars start one by one when called, your time is measured from crossing the finish line) and a final (grid start, a penalty for jumping the start) of 1, 3 or 5 minutes, with live standings and results; the field is made up of opponents. Start positions follow real races: qualifying from a queue before the timing loop, the final from a grid in a single row along the longest straight. The final starts by voice: the announcer counts down "ten … four", then comes 3 to 6 seconds of silence and a siren (in Czech or English according to the game language).</span></p>
+          <p><span lang="cs">Z menu „Závod…“ spustíš kvalifikaci (auta startují po jednom po vyvolání, tvůj čas se měří od průjezdu cílem) a finále (start z roštu, penalizace za ulitý start) na 1, 3 nebo 5 minut, s pořadím během jízdy a výsledky; pole tvoří soupeři. Místa startu jsou podle skutečných závodů: kvalifikace z fronty před měřicí smyčkou, finále z roštu v jedné řadě přes nejdelší rovinku, v hale i na venkovních tratích. Před startem kamera proletí nad auty do tvého pohledu z tribuny (mezerník průlet přeskočí, v dialogu závodu jde vypnout) a auta nesou svá startovní čísla. Finále startuje hlasem: hlasatel odpočítá „deset … čtyři“, pak je 3 až 6 sekund ticho a zazní siréna. Hlas časomíry vyvolává auta v kvalifikaci, hlásí 30 sekund do startu a nejrychlejší kolo (hlášení kola jde v menu vypnout); česky nebo anglicky podle jazyka hry. Soupeři jedou první kolo finále opatrně a drží rozestupy a traťový komisař za závodu vrací auto na trať až po 3 až 5 sekundách.</span><span lang="en">From the "Race…" menu you can run qualifying (cars start one by one when called, your time is measured from crossing the finish line) and a final (grid start, a penalty for jumping the start) of 1, 3 or 5 minutes, with live standings and results; the field is made up of opponents. Start positions follow real races: qualifying from a queue before the timing loop, the final from a grid in a single row along the longest straight, in the hall and on the outdoor tracks alike. Before the start the camera flies over the cars into your view from the driver stand (Space skips it, it can be switched off in the race dialog) and the cars carry their start numbers. The final starts by voice: the announcer counts down "ten … four", then comes 3 to 6 seconds of silence and a siren. The timekeeper's voice calls the cars in qualifying, announces 30 seconds to the start and the fastest lap (the lap announcement can be switched off in the menu); in Czech or English according to the game language. Opponents take the first lap of the final carefully and keep their gaps, and during a race the track marshal puts a car back on track only after 3 to 5 seconds.</span></p>
         </div>
         <div>
           <h3><span lang="cs">Automatické rozlišení</span><span lang="en">Automatic resolution</span></h3>
@@ -358,6 +362,10 @@ footer .logo-sm { flex-basis: 100%; }
         <figure>
           <img src="img/hall-cone.jpg" width="1600" height="900" loading="lazy" alt="Close-up of a red-and-white apex marker with a divider and a yellow line on black carpet in the hall">
           <figcaption><span lang="cs">Terč zblízka: plastický terč s dělicím pásem a žlutou linkou.</span><span lang="en">An apex marker up close: a three-dimensional marker with a divider and a yellow line.</span></figcaption>
+        </figure>
+        <figure>
+          <img src="img/race-grid.jpg" width="1600" height="900" loading="lazy" alt="Low view along the starting grid in the hall: a blue touring car in its box in the foreground, the other cars lined up in a row in the distance, the countdown number 6 on screen and the results panel on the right">
+          <figcaption><span lang="cs">Finále: deset aut na roštu při odpočtu hlasatele.</span><span lang="en">The final: ten cars on the grid during the announcer's countdown.</span></figcaption>
         </figure>
         <figure>
           <img src="img/race-start.jpg" width="1600" height="900" loading="lazy" alt="Low view of the final just after the siren: the blue pole position car pulling away, the other cars starting to move out of their boxes, the START message on screen">
