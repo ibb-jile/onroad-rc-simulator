@@ -11,94 +11,128 @@
 <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans:wght@400;500;600&family=Saira+Semi+Condensed:wght@600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans:wght@400;500;600&family=Exo+2:ital,wght@0,600;0,700;1,800&display=swap">
 <style>
-/* Layout: „pit board“ – úvod s tabulí časů, snímek z trati s pruhem ideální stopy, pak obsah v jednom sloupci 68rem */
+/* Vzhled podle loga „E“: ikona hry, Exo 2 800 italic, tříbarevný proužek (zelená · červená · žlutá), tmavý pás značky.
+   Layout: tmavý pás (hlavička + úvod + patička) v obou režimech, obsah pod ním se řídí světlým/tmavým režimem, sloupec 68rem. */
 :root {
-  --bg: #eceeea;          /* betonová podlaha haly */
+  --bg: #F4F2EC;          /* světlý podklad z loga */
   --surface: #ffffff;
-  --ink: #1b1e1b;
-  --muted: #5a5f58;
-  --rule: #c9ccc4;
-  --tape: #3f7d45;        /* zelená páska dělicího pásu */
-  --wood: #9c7a45;        /* dřevěný mantinel */
-  --cta-bg: #24272a;
-  --cta-fg: #f1e3a6;
-  --board-bg: #24272a;
-  --board-fg: #eef0ea;
-  --board-dim: #9fa59b;
-  --board-time: #f1e3a6;
-  --line-go: #3fae55;     /* ideální stopa: plyn */
-  --line-limit: #e9c43c;  /* hranice přilnavosti */
-  --line-brake: #d8463a;  /* brzda */
-  --font-display: "Saira Semi Condensed", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+  --ink: #14181B;
+  --muted: #4A5258;
+  --rule: #D6D8D2;
+  --green: #17753A;       /* odkazy a zelené značky (text, tenké značky) */
+  --red: #C41D1B;
+  --gold: #8A5D00;        /* žlutá/okrová pro text a tenké značky */
+  --s1: #1E8E3E;          /* proužek: plyn */
+  --s2: #C41D1B;          /* proužek: brzda */
+  --s3: #B37A00;          /* proužek: hranice přilnavosti */
+  --on-green: #ffffff;
+  --focus: #8A5D00;
+  --line-go: var(--s1);   /* ideální stopa: plyn */
+  --line-limit: var(--s3);/* hranice přilnavosti */
+  --line-brake: var(--s2);/* brzda */
+  --font-display: "Exo 2", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
   --font-body: "IBM Plex Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #1c1e1c; --surface: #262926; --ink: #ecede7; --muted: #a3a89d; --rule: #3a3e39;
-    --tape: #6db36f; --wood: #c9a26b; --cta-bg: #e8d58f; --cta-fg: #1c1e1c;
-    --board-bg: #111311; --board-fg: #eef0ea; --board-dim: #8d9389; --board-time: #e8d58f; color-scheme: dark;
+    --bg: #14181B; --surface: #1E2428; --ink: #F4F2EC; --muted: #AEB6BC; --rule: #2E363C;
+    --green: #3CCB5E; --red: #F0473F; --gold: #F2B632; --s1: #3CCB5E; --s2: #F0473F; --s3: #F2B632;
+    --on-green: #0C1410; --focus: #F2B632; color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #1c1e1c; --surface: #262926; --ink: #ecede7; --muted: #a3a89d; --rule: #3a3e39;
-  --tape: #6db36f; --wood: #c9a26b; --cta-bg: #e8d58f; --cta-fg: #1c1e1c;
-  --board-bg: #111311; --board-fg: #eef0ea; --board-dim: #8d9389; --board-time: #e8d58f; color-scheme: dark;
+  --bg: #14181B; --surface: #1E2428; --ink: #F4F2EC; --muted: #AEB6BC; --rule: #2E363C;
+  --green: #3CCB5E; --red: #F0473F; --gold: #F2B632; --s1: #3CCB5E; --s2: #F0473F; --s3: #F2B632;
+  --on-green: #0C1410; --focus: #F2B632; color-scheme: dark;
+}
+/* tmavý pás značky: hlavička, úvod a patička jsou tmavé v obou režimech */
+.band, .top {
+  --bg: #14181B; --surface: #1E2428; --ink: #F4F2EC; --muted: #AEB6BC; --rule: #2E363C;
+  --green: #3CCB5E; --red: #F0473F; --gold: #F2B632; --s1: #3CCB5E; --s2: #F0473F; --s3: #F2B632;
+  --on-green: #0C1410; --focus: #F2B632; color-scheme: dark;
+  background: var(--bg); color: var(--ink);
 }
 :root[data-lang="cs"] [lang="en"], :root[data-lang="en"] [lang="cs"] { display: none !important; }
 
 body { margin: 0; background: var(--bg); color: var(--ink); font: 400 1.0625rem/1.6 var(--font-body); }
 img { max-width: 100%; }
 .wrap { max-width: 68rem; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
-a { color: var(--tape); text-underline-offset: 0.18em; }
-a:focus-visible, button:focus-visible { outline: 2px solid var(--line-limit); outline-offset: 3px; border-radius: 4px; }
+a { color: var(--green); text-underline-offset: 0.18em; }
+a:focus-visible, button:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; border-radius: 4px; }
 h1, h2, h3 { font-family: var(--font-display); text-wrap: balance; line-height: 1.1; margin: 0; }
-h2 { font-size: clamp(1.7rem, 3.2vw, 2.3rem); letter-spacing: 0.01em; }
+h2 { font-size: clamp(1.8rem, 3.4vw, 2.4rem); font-weight: 800; font-style: italic; letter-spacing: 0.005em; }
+h3 { font-weight: 700; }
 p { margin: 0; }
 
+/* tříbarevný proužek (zelená · červená · žlutá, poměr 54 : 22 : 30) */
+.strip { display: flex; gap: var(--sg, 3px); width: var(--sw, 64px); height: var(--sh, 6px); flex: none; }
+.strip i { display: block; height: 100%; border-radius: 999px; }
+.strip i:nth-child(1) { flex: 54 1 0; background: var(--s1); }
+.strip i:nth-child(2) { flex: 22 1 0; background: var(--s2); }
+.strip i:nth-child(3) { flex: 30 1 0; background: var(--s3); }
+.strip-sm { margin-bottom: 16px; --sw: 72px; --sh: 6px; }
+
+/* logo: ikona + nápis + proužek a SIMULATOR */
+.logo { display: flex; align-items: center; gap: 12px; color: var(--ink); }
+.logo img { display: block; width: 44px; height: 44px; flex: none; }
+.lockup { display: flex; flex-direction: column; align-items: flex-start; gap: 0.2em; font-family: var(--font-display); font-size: 1.6rem; line-height: 1; margin: 0; }
+.lk-name { font-weight: 800; font-style: italic; color: var(--ink); }
+.lk-row { display: flex; align-items: center; gap: 0.24em; white-space: nowrap; }
+.lk-row .strip { --sw: 1.73em; --sh: 0.13em; --sg: 0.06em; }
+.lk-sim { font-size: 0.4em; font-weight: 600; letter-spacing: 0.34em; text-transform: uppercase; color: var(--muted); }
+.logo-sm img { width: 32px; height: 32px; }
+.logo-sm .lockup { font-size: 1.15rem; }
+
 /* hlavička */
-.top { padding-block: 18px; }
-.top .wrap { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 16px; }
-.mark { font: 700 1rem/1 var(--font-display); letter-spacing: 0.14em; text-transform: uppercase; }
-.mark span { color: var(--tape); }
-.lang { display: flex; border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; }
+.top { padding-block: 16px; }
+.top .wrap { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px 20px; }
+.lang { display: flex; border: 1px solid #4A5258; border-radius: 6px; overflow: hidden; }
 .top-right { display: flex; align-items: center; gap: 12px; }
-.support-btn { display: inline-flex; align-items: center; gap: 6px; font: 600 0.85rem/1 var(--font-body); padding: 8px 12px; border-radius: 6px; background: var(--cta-bg); color: var(--cta-fg); text-decoration: none; white-space: nowrap; }
-.support-btn svg { width: 14px; height: 14px; color: #e0525a; }
-.support-btn:hover { filter: brightness(1.08); }
-.lang button { font: 600 0.8rem/1 var(--font-body); letter-spacing: 0.08em; padding: 8px 12px; border: 0; background: transparent; color: var(--muted); cursor: pointer; }
+.support-btn { display: inline-flex; align-items: center; gap: 6px; font: 600 0.85rem/1 var(--font-body); padding: 9px 13px; border-radius: 6px; background: var(--surface); border: 1px solid #4A5258; color: var(--ink); text-decoration: none; white-space: nowrap; }
+.support-btn svg { width: 14px; height: 14px; color: var(--red); }
+.support-btn:hover { border-color: var(--muted); }
+.lang button { font: 600 0.8rem/1 var(--font-body); letter-spacing: 0.08em; padding: 9px 12px; border: 0; background: transparent; color: var(--muted); cursor: pointer; }
 .lang button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
 
 /* úvod */
-.hero { padding-block: clamp(24px, 5vw, 56px) 28px; }
-.hero .wrap { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 56px); align-items: end; }
-.eyebrow { font: 600 0.8rem/1.2 var(--font-body); letter-spacing: 0.14em; text-transform: uppercase; color: var(--tape); margin-bottom: 14px; }
-.hero h1 { font-size: clamp(2.6rem, 7vw, 4.6rem); font-weight: 700; letter-spacing: -0.005em; }
-.lead { margin-top: 18px; max-width: 34rem; color: var(--muted); font-size: 1.15rem; }
+.hero { position: relative; overflow: hidden; border-bottom: 1px solid var(--rule); padding-block: clamp(28px, 5vw, 56px) clamp(64px, 8vw, 96px); }
+.hero .wrap { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 56px); align-items: end; }
+.hero-ribbon { position: absolute; left: -4%; right: -4%; bottom: clamp(20px, 2.6vw, 34px); height: clamp(10px, 1.1vw, 16px); border-radius: 999px; transform: rotate(-1.3deg); background: linear-gradient(90deg, #E8792B 0%, #D9B13B 50%, #6DB044 100%); opacity: 0.92; }
+.eyebrow { font: 600 0.8rem/1.2 var(--font-body); letter-spacing: 0.14em; text-transform: uppercase; color: var(--green); margin-bottom: 18px; }
+.hero-head { display: flex; align-items: center; gap: clamp(14px, 2.4vw, 28px); }
+.hero-icon { display: block; width: clamp(96px, 12vw, 150px); height: auto; aspect-ratio: 1; flex: none; filter: drop-shadow(0 8px 18px rgba(0,0,0,0.45)); }
+.hero h1.lockup { font-size: clamp(2.7rem, 4.6vw, 4.4rem); gap: 0.2em; }
+.hero h1 .lk-row { gap: 0.2em; }
+.hero h1 .lk-row .strip { --sw: 1.73em; --sh: 0.11em; --sg: 0.06em; }
+.hero h1 .lk-sim { font-size: 0.36em; font-weight: 500; }
+.lead { margin-top: 22px; max-width: 34rem; color: var(--muted); font-size: 1.15rem; }
 .actions { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; margin-top: 28px; }
-.cta { display: inline-flex; align-items: center; gap: 10px; background: var(--cta-bg); color: var(--cta-fg); text-decoration: none; font: 600 1.05rem/1 var(--font-body); padding: 16px 22px; border-radius: 8px; }
-.cta:hover { filter: brightness(1.08); }
-.cta svg { width: 18px; height: 18px; }
+.actions a:not(.cta):not(.btn-line) { color: var(--ink); }
+.cta { display: inline-flex; align-items: center; gap: 10px; background: var(--s1); color: var(--on-green); text-decoration: none; font: 700 1.1rem/1 var(--font-body); padding: 18px 26px; border-radius: 10px; box-shadow: 0 6px 20px rgba(60, 203, 94, 0.28); }
+.cta:hover { filter: brightness(1.07); }
+.cta svg { width: 20px; height: 20px; }
 .facts { margin-top: 16px; color: var(--muted); font-size: 0.92rem; }
 
 /* tabule časů */
-.board { background: var(--board-bg); color: var(--board-fg); border-radius: 10px; padding: 20px 22px 18px; font-family: var(--font-mono); }
-.board h3 { font: 600 0.78rem/1.3 var(--font-body); letter-spacing: 0.14em; text-transform: uppercase; color: var(--board-dim); margin-bottom: 10px; }
+.board { background: var(--surface); color: var(--ink); border: 1px solid var(--rule); border-radius: 12px; padding: 20px 22px 18px; font-family: var(--font-mono); }
+.board .strip { --sw: 100%; --sh: 5px; margin-bottom: 16px; }
+.board h3 { font: 600 0.78rem/1.3 var(--font-body); letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
 .board table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
-.board td { padding: 9px 0; border-top: 1px solid color-mix(in srgb, var(--board-dim) 30%, transparent); font-size: 1rem; }
-.board td.t { text-align: right; font-size: 1.45rem; color: var(--board-time); }
-.board td.t small { font-size: 0.85rem; color: var(--board-dim); margin-left: 2px; }
-.board .note { margin-top: 10px; font: 400 0.8rem/1.45 var(--font-body); color: var(--board-dim); }
+.board td { padding: 9px 0; border-top: 1px solid var(--rule); font-size: 1rem; }
+.board td.t { text-align: right; font-size: 1.45rem; color: var(--gold); }
+.board td.t small { font-size: 0.85rem; color: var(--muted); margin-left: 2px; }
+.board .note { margin-top: 10px; font: 400 0.8rem/1.45 var(--font-body); color: var(--muted); }
 
 /* snímek s ideální stopou */
-.shot { margin: 0; }
-.shot img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 10px 10px 0 0; }
-.racing-line { height: 8px; border-radius: 0 0 10px 10px; background: linear-gradient(90deg, var(--line-go) 0 38%, var(--line-limit) 52%, var(--line-brake) 66%, var(--line-limit) 78%, var(--line-go) 90%); }
+.shot { margin: clamp(24px, 4vw, 44px) 0 0; }
+.shot img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 12px 12px 0 0; }
+.racing-line { height: 10px; border-radius: 0 0 12px 12px; background: linear-gradient(90deg, var(--line-go) 0 38%, var(--line-limit) 52%, var(--line-brake) 66%, var(--line-limit) 78%, var(--line-go) 90%); }
 .shot figcaption { margin-top: 10px; font-size: 0.88rem; color: var(--muted); }
 .legend { display: inline-flex; gap: 14px; margin-left: 6px; flex-wrap: wrap; }
-.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
 
 section { padding-block: clamp(40px, 7vw, 80px); }
 section + section { border-top: 1px solid var(--rule); }
@@ -106,27 +140,30 @@ section + section { border-top: 1px solid var(--rule); }
 /* co hra umí */
 .features { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 30px 48px; margin-top: 32px; }
 .features h3 { font-size: 1.3rem; margin-bottom: 8px; display: flex; align-items: baseline; gap: 10px; }
-.features h3::before { content: ""; width: 14px; height: 4px; border-radius: 2px; background: var(--tape); flex: none; transform: translateY(-5px); }
+.features h3::before { content: ""; width: 14px; height: 4px; border-radius: 2px; background: var(--green); flex: none; transform: translateY(-5px); }
+.features > div:nth-child(3n+2) h3::before { background: var(--red); }
+.features > div:nth-child(3n) h3::before { background: var(--gold); }
 .features p { color: var(--muted); max-width: 32rem; }
 .unit { font-family: var(--font-mono); font-size: 0.92em; color: var(--ink); white-space: nowrap; }
 
 /* galerie */
 .gallery { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; margin-top: 32px; }
 .gallery figure { margin: 0; min-width: 0; }
-.gallery img { display: block; width: 100%; height: auto; border-radius: 8px; border: 1px solid var(--rule); }
+.gallery img { display: block; width: 100%; height: auto; border-radius: 10px; border: 1px solid var(--rule); }
 .gallery figcaption { margin-top: 10px; font-size: 0.92rem; color: var(--muted); }
 
 /* instalace */
 .install { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 40px; margin-top: 32px; align-items: start; }
 .steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 22px; counter-reset: step; }
 .steps li { counter-increment: step; display: grid; grid-template-columns: 2.4rem minmax(0, 1fr); gap: 4px 14px; }
-.steps li::before { content: counter(step); font: 700 1.5rem/1.2 var(--font-display); color: var(--tape); grid-row: span 2; }
+.steps li::before { content: counter(step); font: 800 italic 1.7rem/1.1 var(--font-display); color: var(--green); grid-row: span 2; }
 .steps strong { font-weight: 600; }
 .steps p { color: var(--muted); }
-.cmd { margin-top: 10px; display: flex; gap: 8px; align-items: stretch; min-width: 0; }
+.cmd { grid-column: 2; margin-top: 10px; display: flex; gap: 8px; align-items: stretch; min-width: 0; }
 .cmd code { flex: 1; min-width: 0; overflow-x: auto; white-space: nowrap; background: var(--surface); border: 1px solid var(--rule); border-radius: 6px; padding: 10px 12px; font: 500 0.85rem/1.4 var(--font-mono); }
 .cmd button { flex: none; border: 1px solid var(--rule); background: var(--surface); color: var(--ink); border-radius: 6px; padding: 0 12px; font: 500 0.85rem/1 var(--font-body); cursor: pointer; }
-.req { background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; padding: 22px 24px; }
+.req { background: var(--surface); border: 1px solid var(--rule); border-radius: 12px; padding: 20px 24px 22px; }
+.req .strip { --sw: 100%; --sh: 5px; margin-bottom: 18px; }
 .req h3 { font-size: 1.15rem; margin-bottom: 12px; }
 .req dl { margin: 0; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 8px 16px; font-size: 0.95rem; }
 .req dt { color: var(--muted); }
@@ -137,19 +174,27 @@ section + section { border-top: 1px solid var(--rule); }
 .support p { color: var(--muted); margin-top: 12px; max-width: 36rem; }
 .support .gh { margin-top: 20px; }
 .donate { display: grid; gap: 10px; justify-items: center; text-align: center; }
-.donate img { width: 220px; height: 220px; background: #fff; padding: 8px; border-radius: 8px; border: 1px solid var(--rule); }
+.donate img { width: 220px; height: 220px; background: #fff; padding: 8px; border-radius: 10px; border: 1px solid var(--rule); }
 .donate .amounts { display: flex; gap: 8px; }
 .donate .amounts button { font: 600 0.95rem/1 var(--font-body); padding: 10px 14px; border-radius: 8px; border: 1px solid var(--ink); background: transparent; color: var(--ink); cursor: pointer; }
-.donate .amounts button[aria-pressed="true"] { background: var(--cta-bg); color: var(--cta-fg); border-color: var(--cta-bg); }
+.donate .amounts button[aria-pressed="true"] { background: var(--green); color: var(--on-green); border-color: var(--green); }
 .donate .acct { font-variant-numeric: tabular-nums; }
-.btn-line { display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--ink); color: var(--ink); text-decoration: none; border-radius: 8px; padding: 12px 18px; font-weight: 600; }
-footer { border-top: 1px solid var(--rule); padding-block: 28px 40px; color: var(--muted); font-size: 0.9rem; }
+.btn-line { display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--ink); color: var(--ink); text-decoration: none; border-radius: 10px; padding: 14px 18px; font-weight: 600; }
+.btn-line:hover { background: color-mix(in srgb, var(--ink) 10%, transparent); }
+footer { padding-block: 32px 44px; color: var(--muted); font-size: 0.9rem; }
 footer a { color: inherit; text-underline-offset: 3px; }
-footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; }
+footer .wrap { display: flex; flex-wrap: wrap; gap: 14px 24px; justify-content: space-between; }
+footer .logo-sm { flex-basis: 100%; }
 
 @media (max-width: 860px) {
   .hero .wrap, .install, .support { grid-template-columns: minmax(0, 1fr); }
   .features, .gallery { grid-template-columns: minmax(0, 1fr); }
+  .hero h1.lockup { font-size: clamp(2.7rem, 9vw, 4.4rem); }
+}
+@media (max-width: 560px) {
+  .hero-ribbon { display: none; }
+  .hero { padding-bottom: 40px; }
+  .cta, .actions .btn-line { width: 100%; justify-content: center; box-sizing: border-box; }
 }
 @media (prefers-reduced-motion: no-preference) {
   .cta { transition: filter 0.15s ease; }
@@ -159,7 +204,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: s
 <body>
 <header class="top">
   <div class="wrap">
-    <div class="mark">Onroad <span>RC</span> Simulator</div>
+    <div class="logo"><img src="img/icon-320.png" width="44" height="44" alt="Onroad RC Simulator icon: a red touring car on a racing line fading from orange through yellow to green"><div class="lockup"><span class="lk-name">Onroad RC</span><span class="lk-row"><span class="strip" aria-hidden="true"><i></i><i></i><i></i></span><span class="lk-sim">Simulator</span></span></div></div>
     <div class="top-right">
       <a class="support-btn" href="#prispevek"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 17s-6.5-3.9-6.5-8.6A3.6 3.6 0 0 1 10 6a3.6 3.6 0 0 1 6.5 2.4C16.5 13.1 10 17 10 17z" fill="currentColor"/></svg><span lang="cs">Podpoř mě</span><span lang="en">Support me</span></a>
       <div class="lang" role="group" aria-label="Jazyk / Language">
@@ -171,11 +216,15 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: s
 </header>
 
 <main>
-  <div class="hero">
+  <div class="hero band">
+    <div class="hero-ribbon" aria-hidden="true"></div>
     <div class="wrap">
       <div>
         <p class="eyebrow"><span lang="cs">RC simulátor pro Mac a Windows · zdarma</span><span lang="en">RC simulator for Mac and Windows · free</span></p>
-        <h1>Onroad RC Simulator</h1>
+        <div class="hero-head">
+          <img class="hero-icon" src="img/icon-320.png" width="320" height="320" alt="">
+          <h1 class="lockup"><span class="lk-name">Onroad RC</span> <span class="lk-row"><span class="strip" aria-hidden="true"><i></i><i></i><i></i></span> <span class="lk-sim">Simulator</span></span></h1>
+        </div>
         <p class="lead">
           <span lang="cs">Elektrický touring car 1/10 na kobercové trati. Motor a regulátor podle katalogu, setup jako na skutečném autě a vysílačka přes USB.</span>
           <span lang="en">An electric 1/10 touring car on a carpet track. Motor and ESC from catalogue data, a setup like on the real car, and your own transmitter over USB.</span>
@@ -192,6 +241,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: s
         <p class="facts"><span lang="cs">Windows 10 a 11 (64bit) · první sestavení, na skutečném PC zatím nevyzkoušené · zip 52 MB</span><span lang="en">Windows 10 and 11 (64-bit) · first build, not yet tried on a real PC · 52 MB zip</span></p>
       </div>
       <aside class="board" aria-label="Lap times">
+        <span class="strip" aria-hidden="true"><i></i><i></i><i></i></span>
         <h3><span lang="cs">Autopilot · nejlepší kolo</span><span lang="en">Autopilot · best lap</span></h3>
         <table>
           <tr><td><span lang="cs">Nákres 8 × 6</span><span lang="en">Sketch 8 × 6</span></td><td class="t">13.83<small>s</small></td></tr>
@@ -208,21 +258,15 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: s
 
   <div class="wrap">
     <figure class="shot">
-      <img src="img/chase.jpg" width="1600" height="900" alt="Red touring car seen from the driver stand, following the racing line colored green, yellow and red between dividers and red-and-white cones">
+      <img src="img/race-grid.jpg" width="1600" height="900" alt="Low view along the starting grid in the hall: a blue touring car in its box in the foreground, the other cars lined up in a row in the distance, the countdown number 6 on screen and the results panel on the right">
       <div class="racing-line" aria-hidden="true"></div>
-      <figcaption>
-        <span lang="cs">Ideální stopa na koberci:</span><span lang="en">Racing line on the carpet:</span>
-        <span class="legend">
-          <span><i style="background: var(--line-go)"></i><span lang="cs">plný plyn</span><span lang="en">full throttle</span></span>
-          <span><i style="background: var(--line-limit)"></i><span lang="cs">na hranici přilnavosti</span><span lang="en">at the grip limit</span></span>
-          <span><i style="background: var(--line-brake)"></i><span lang="cs">brzda</span><span lang="en">brake</span></span>
-        </span>
-      </figcaption>
+      <figcaption><span lang="cs">Finále: deset aut na roštu při odpočtu hlasatele.</span><span lang="en">The final: ten cars on the grid during the announcer's countdown.</span></figcaption>
     </figure>
   </div>
 
   <section>
     <div class="wrap">
+      <span class="strip strip-sm" aria-hidden="true"><i></i><i></i><i></i></span>
       <h2><span lang="cs">Co v něm najdeš</span><span lang="en">What's inside</span></h2>
       <div class="features">
         <div>
@@ -275,8 +319,20 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: s
 
   <section>
     <div class="wrap">
+      <span class="strip strip-sm" aria-hidden="true"><i></i><i></i><i></i></span>
       <h2><span lang="cs">Jak to vypadá</span><span lang="en">Screenshots</span></h2>
       <div class="gallery">
+        <figure>
+          <img src="img/chase.jpg" width="1600" height="900" loading="lazy" alt="Red touring car seen from the driver stand, following the racing line colored green, yellow and red between dividers and red-and-white cones">
+          <figcaption>
+            <span lang="cs">Ideální stopa na koberci:</span><span lang="en">Racing line on the carpet:</span>
+            <span class="legend">
+              <span><i style="background: var(--line-go)"></i><span lang="cs">plný plyn</span><span lang="en">full throttle</span></span>
+              <span><i style="background: var(--line-limit)"></i><span lang="cs">na hranici přilnavosti</span><span lang="en">at the grip limit</span></span>
+              <span><i style="background: var(--line-brake)"></i><span lang="cs">brzda</span><span lang="en">brake</span></span>
+            </span>
+          </figcaption>
+        </figure>
         <figure>
           <img src="img/racing-line.jpg" width="1600" height="900" loading="lazy" alt="Wide view from the driver stand over the carpet track in a sports hall with the racing line, dividers, dots and apex markers">
           <figcaption><span lang="cs">Široký pohled z pódia řidičů: autopilot jede po ideální stopě mezi pásy, poklicemi a terči.</span><span lang="en">A wide view from the driver stand: the autopilot follows the racing line between dividers, dots and apex markers.</span></figcaption>
@@ -292,10 +348,6 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: s
         <figure>
           <img src="img/hall-cone.jpg" width="1600" height="900" loading="lazy" alt="Close-up of a red-and-white apex marker with a divider and a yellow line on black carpet in the hall">
           <figcaption><span lang="cs">Terč zblízka: plastický terč s dělicím pásem a žlutou linkou.</span><span lang="en">An apex marker up close: a three-dimensional marker with a divider and a yellow line.</span></figcaption>
-        </figure>
-        <figure>
-          <img src="img/race-grid.jpg" width="1600" height="900" loading="lazy" alt="Low view along the starting grid in the hall: a blue touring car in its box in the foreground, the other cars lined up in a row in the distance, the countdown number 6 on screen and the results panel on the right">
-          <figcaption><span lang="cs">Finále: deset aut na roštu při odpočtu hlasatele.</span><span lang="en">The final: ten cars on the grid during the announcer's countdown.</span></figcaption>
         </figure>
         <figure>
           <img src="img/race-start.jpg" width="1600" height="900" loading="lazy" alt="Low view of the final just after the siren: the blue pole position car pulling away, the other cars starting to move out of their boxes, the START message on screen">
@@ -363,6 +415,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: s
 
   <section id="install">
     <div class="wrap">
+      <span class="strip strip-sm" aria-hidden="true"><i></i><i></i><i></i></span>
       <h2><span lang="cs">Instalace</span><span lang="en">Installation</span></h2>
       <div class="install">
         <ol class="steps">
@@ -388,6 +441,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: s
           </li>
         </ol>
         <aside class="req">
+          <span class="strip" aria-hidden="true"><i></i><i></i><i></i></span>
           <h3><span lang="cs">Požadavky</span><span lang="en">Requirements</span></h3>
           <dl>
             <dt><span lang="cs">Mac</span><span lang="en">Mac</span></dt><dd><span lang="cs">čip Apple M1 a novější</span><span lang="en">Apple M1 or later</span></dd>
@@ -405,6 +459,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: s
   <section>
     <div class="wrap support">
       <div>
+        <span class="strip strip-sm" aria-hidden="true"><i></i><i></i><i></i></span>
         <h2><span lang="cs">Hra je zdarma</span><span lang="en">The game is free</span></h2>
         <p><span lang="cs">Stáhni si ji a jezdi. Když tě baví a chceš podpořit další tratě a vývoj, můžeš přispět převodem na účet: stačí naskenovat QR kód v aplikaci banky, částku jde změnit. Chybu nebo nápad napiš na GitHub.</span><span lang="en">Download it and drive. If you enjoy it and want to support more tracks and development, you can chip in with a bank transfer: Czech and Slovak banking apps scan the QR code, from abroad use the IBAN below. Report bugs and ideas on GitHub.</span></p>
         <a class="btn-line gh" href="https://github.com/ibb-jile/onroad-rc-simulator/issues"><span lang="cs">Nahlásit chybu nebo nápad</span><span lang="en">Report a bug or idea</span></a>
@@ -423,8 +478,9 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: s
   </section>
 </main>
 
-<footer>
+<footer class="band">
   <div class="wrap">
+    <div class="logo logo-sm"><img src="img/icon-320.png" width="32" height="32" alt=""><div class="lockup"><span class="lk-name">Onroad RC</span><span class="lk-row"><span class="strip" aria-hidden="true"><i></i><i></i><i></i></span><span class="lk-sim">Simulator</span></span></div></div>
     <span>© 2026 Jiří Leták · Onroad RC Simulator · <a href="#prispevek"><span lang="cs">Přispět</span><span lang="en">Chip in</span></a></span>
     <span><span lang="cs">Postaveno na Godot Engine a Project Chrono. Hra neposílá žádné údaje o tobě, jen se při startu zeptá GitHubu na novou verzi (jde vypnout v menu).</span><span lang="en">Built with Godot Engine and Project Chrono. The game sends no data about you; at startup it only asks GitHub for a new version (you can turn that off in the menu).</span></span>
   </div>
