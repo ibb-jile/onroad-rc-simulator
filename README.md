@@ -14,3 +14,6 @@ The function stores the photos on a branch of a private GitHub repository and op
 by environment variables on Vercel (values are not in this repository): `GITHUB_REQUESTS_TOKEN`, `REQUESTS_REPO`,
 `REQUESTS_BRANCH`, `REQUESTS_LABEL` (optional). Limits: 1 to 8 JPEG photos, 1.5 MB each and 4 MB in total
 (the browser downsizes the photos before sending).
+
+Flood limit: when `REQUESTS_LABEL` is set, the function refuses a request (HTTP 429, `busy`) if 10 or more issues
+with that label were created in the last hour. Fill time is measured in the browser (`elapsed`, at least 3 s).

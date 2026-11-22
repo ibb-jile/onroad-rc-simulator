@@ -208,7 +208,7 @@ section + section { border-top: 1px solid var(--rule); }
 #track-form[data-state="sending"] [data-s="sending"], #track-form[data-state="ok"] [data-s="ok"],
 #track-form[data-state="err-fields"] [data-s="err-fields"], #track-form[data-state="err-photos"] [data-s="err-photos"],
 #track-form[data-state="err-image"] [data-s="err-image"], #track-form[data-state="err-size"] [data-s="err-size"],
-#track-form[data-state="err-network"] [data-s="err-network"], #track-form[data-state="err-server"] [data-s="err-server"] { display: block; }
+#track-form[data-state="err-busy"] [data-s="err-busy"], #track-form[data-state="err-network"] [data-s="err-network"],#track-form[data-state="err-server"] [data-s="err-server"] { display: block; }
 #track-form[data-state="ok"] .form-status { color: var(--green); }
 #track-form[data-state^="err"] .form-status { color: var(--red); }
 .request > .facts a { color: inherit; text-underline-offset: 3px; }
@@ -497,8 +497,7 @@ footer .logo-sm { flex-basis: 100%; }
             <label for="tf-photos"><span lang="cs">Fotky nebo nákres (1–8)</span><span lang="en">Photos or drawing (1–8)</span></label>
             <input type="file" id="tf-photos" name="photos" accept="image/*" multiple required>
           </div>
-          <div class="trap" aria-hidden="true"><input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true"></div>
-          <input type="hidden" name="started" value="">
+          <div class="trap" aria-hidden="true"><input type="text" name="hp" tabindex="-1" autocomplete="off" aria-hidden="true"></div>
           <input type="hidden" name="lang" value="cs">
           <p class="facts"><span lang="cs">E-mail a fotky použiju jen k přidání dráhy a k odpovědi. Fotky se před odesláním zmenší.</span><span lang="en">I will use your e-mail and photos only to add the track and to reply. Photos are downsized before sending.</span></p>
           <button type="submit" class="cta cta-sm"><span lang="cs">Odeslat požadavek</span><span lang="en">Send request</span></button>
@@ -511,6 +510,7 @@ footer .logo-sm { flex-basis: 100%; }
           <span data-s="err-image"><span lang="cs">Některý obrázek se nepodařilo načíst. Zkus JPG nebo PNG.</span><span lang="en">One of the images could not be read. Try JPG or PNG.</span></span>
           <span data-s="err-size"><span lang="cs">Fotky jsou i po zmenšení moc velké. Pošli jich méně.</span><span lang="en">The photos are too large even after downsizing. Send fewer of them.</span></span>
           <span data-s="err-network"><span lang="cs">Odeslání se nepodařilo. Zkontroluj připojení a zkus to znovu.</span><span lang="en">Sending failed. Check your connection and try again.</span></span>
+          <span data-s="err-busy"><span lang="cs">Teď přišlo hodně požadavků. Zkus to prosím za hodinu.</span><span lang="en">Too many requests right now. Please try again in an hour.</span></span>
           <span data-s="err-server"><span lang="cs">Na serveru se něco pokazilo. Zkus to později, nebo napiš přes GitHub.</span><span lang="en">Something went wrong on the server. Try again later, or write on GitHub.</span></span>
         </div>
       </form>
@@ -634,10 +634,7 @@ footer .logo-sm { flex-basis: 100%; }
   var btn = form.querySelector("button[type=submit]");
   var box = form.querySelector("fieldset");
   function state(s) { form.dataset.state = s; }
-  form.addEventListener("focusin", function () {
-    var f = form.elements.started;
-    if (!f.value) f.value = String(Date.now());
-  });
+  var t0 = Date.now(); // doba vyplnění se měří jen v prohlížeči
   function load(file) {
     function viaImage() {
       return new Promise(function (ok, fail) {
@@ -667,7 +664,13 @@ footer .logo-sm { flex-basis: 100%; }
       });
     });
   }
-  function all(files, max, q) { return Promise.all(files.map(function (f) { return shrink(f, max, q); })); }
+  // Postupně jedna po druhé (úspora paměti), pořadí zůstává.
+  function all(files, max, q) {
+    var out = [];
+    return files.reduce(function (p, f) {
+      return p.then(function () { return shrink(f, max, q); }).then(function (b) { out.push(b); });
+    }, Promise.resolve()).then(function () { return out; });
+  }
   function sum(bl) { return bl.reduce(function (a, b) { return a + b.size; }, 0); }
   function fits(bl) { return sum(bl) <= 3800000 && bl.every(function (b) { return b.size <= 1400000; }); }
   form.addEventListener("submit", function (e) {
@@ -683,14 +686,15 @@ footer .logo-sm { flex-basis: 100%; }
     }).then(function (bl) {
       if (!fits(bl)) { fail("err-size"); return; }
       var fd = new FormData();
-      ["track", "place", "email", "name", "note", "website", "started", "lang"].forEach(function (n) { fd.append(n, form.elements[n].value); });
+      ["track", "place", "email", "name", "note", "hp", "lang"].forEach(function (n) { fd.append(n, form.elements[n].value); });
+      fd.append("elapsed", String(Date.now() - t0));
       var kind = form.querySelector("input[name=kind]:checked");
       fd.append("kind", kind ? kind.value : "");
       bl.forEach(function (b, i) { fd.append("photos", b, (i + 1) + ".jpg"); });
       return fetch("/api/track-request", { method: "POST", body: fd }).then(function (r) {
         return r.json().catch(function () { return {}; }).then(function (j) {
           if (r.ok && j.ok) { state("ok"); form.reset(); box.disabled = true; return; }
-          fail({ fields: "err-fields", photos: "err-photos", size: "err-size" }[j.error] || "err-server");
+          fail({ fields: "err-fields", photos: "err-photos", size: "err-size", busy: "err-busy" }[j.error] || "err-server");
         });
       }, function () { fail("err-network"); });
     }, function () { fail("err-image"); });

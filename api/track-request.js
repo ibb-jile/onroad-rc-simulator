@@ -16,7 +16,7 @@ function puvodOk(origin) {
   return (
     origin === "https://onroadrc.cz" ||
     origin === "https://www.onroadrc.cz" ||
-    /^https:\/\/[a-z0-9-]+(\.[a-z0-9-]+)*\.vercel\.app$/i.test(origin)
+    /^https:\/\/onroad-rc-simulator(-[a-z0-9-]+)?\.vercel\.app$/.test(origin)
   );
 }
 
@@ -128,12 +128,12 @@ export default {
       return chyba(400, "fields");
     }
 
-    // Past na roboty: tváříme se, že vše dopadlo dobře.
+    // Past na roboty: vyplněné skryté pole, tiše děkujeme a nic neděláme.
     const text = (k) => (typeof form.get(k) === "string" ? form.get(k) : "");
-    const start = Number(text("started"));
-    if (text("website").trim() !== "" || !text("started").trim() || !Number.isFinite(start) || Date.now() - start < 3000) {
-      return odpoved(200, { ok: true });
-    }
+    if (text("hp").trim() !== "") return odpoved(200, { ok: true });
+    // Doba vyplnění měřená v prohlížeči (nezávisí na hodinách).
+    const elapsed = Number(text("elapsed"));
+    if (!text("elapsed").trim() || !Number.isFinite(elapsed) || elapsed < 3000) return chyba(400, "fast");
 
     const p = {
       track: cisti(text("track"), true),
@@ -174,6 +174,12 @@ export default {
 
     const id = idPozadavku();
     try {
+      // Strop proti zahlcení: 10 a více požadavků za poslední hodinu.
+      if (label) {
+        const od = new Date(Date.now() - 3600000).toISOString();
+        const nedavne = await gh(token, "GET", `/repos/${repo}/issues?state=all&labels=${encodeURIComponent(label)}&since=${encodeURIComponent(od)}&per_page=20`);
+        if (Array.isArray(nedavne) && nedavne.length >= 10) return chyba(429, "busy");
+      }
       await zapisFotky(token, repo, branch, id, fotky);
       await gh(token, "POST", `/repos/${repo}/issues`, {
         title: `Dráha na přání: ${p.track}`,
