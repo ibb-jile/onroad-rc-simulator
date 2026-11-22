@@ -192,7 +192,31 @@ section + section { border-top: 1px solid var(--rule); }
 .support p { color: var(--muted); margin-top: 12px; max-width: 36rem; }
 .support .gh { margin-top: 20px; }
 .request p { color: var(--muted); margin-top: 12px; max-width: 36rem; }
-.request .gh { margin-top: 20px; }
+#track-form { margin-top: 20px; max-width: 36rem; }
+#track-form fieldset { border: 0; margin: 0; padding: 0; min-width: 0; display: flex; flex-direction: column; gap: 16px; }
+#track-form .field { display: flex; flex-direction: column; gap: 6px; }
+#track-form label, #track-form .lbl { font-weight: 600; color: var(--ink); }
+#track-form input[type="text"], #track-form input[type="email"], #track-form textarea, #track-form input[type="file"] {
+  width: 100%; box-sizing: border-box; font: inherit; color: var(--ink); background: var(--surface);
+  border: 1px solid var(--rule); border-radius: 8px; padding: 10px 12px; }
+#track-form textarea { resize: vertical; }
+#track-form input:focus-visible, #track-form textarea:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+#track-form .choices { display: flex; flex-wrap: wrap; gap: 8px 20px; }
+#track-form .choices label { font-weight: 400; display: inline-flex; align-items: center; gap: 8px; }
+#track-form .choices input { width: 1.1rem; height: 1.1rem; accent-color: var(--green); }
+#track-form .trap { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+#track-form .facts { margin-top: 0; }
+.cta-sm { align-self: flex-start; font-size: 1rem; padding: 14px 22px; border: 0; cursor: pointer; }
+.cta-sm:disabled { opacity: 0.6; cursor: default; }
+.form-status { margin-top: 14px; font-weight: 600; min-height: 1.5em; }
+.form-status > span { display: none; }
+#track-form[data-state="sending"] [data-s="sending"], #track-form[data-state="ok"] [data-s="ok"],
+#track-form[data-state="err-fields"] [data-s="err-fields"], #track-form[data-state="err-photos"] [data-s="err-photos"],
+#track-form[data-state="err-image"] [data-s="err-image"], #track-form[data-state="err-size"] [data-s="err-size"],
+#track-form[data-state="err-network"] [data-s="err-network"], #track-form[data-state="err-server"] [data-s="err-server"] { display: block; }
+#track-form[data-state="ok"] .form-status { color: var(--green); }
+#track-form[data-state^="err"] .form-status { color: var(--red); }
+.request > .facts a { color: inherit; text-underline-offset: 3px; }
 .donate { display: grid; gap: 10px; justify-items: center; text-align: center; }
 .donate img { width: 220px; height: 220px; background: #fff; padding: 8px; border-radius: 10px; border: 1px solid var(--rule); }
 .donate .amounts { display: flex; gap: 8px; }
@@ -446,7 +470,57 @@ footer .logo-sm { flex-basis: 100%; }
       <span class="strip strip-sm" aria-hidden="true"><i></i><i></i><i></i></span>
       <h2><span lang="cs">Další dráhy na přání</span><span lang="en">More tracks on request</span></h2>
       <p><span lang="cs">Chybí ti tvoje domácí dráha? Rád ji do hry přidám. Stačí pár fotek, na kterých je vidět celá dráha, ideálně i nákres v měřítku.</span><span lang="en">Missing your home track? I'll gladly add it to the game. A few photos showing the whole track are enough, ideally with a drawing to scale.</span></p>
-      <a class="btn-line gh" href="https://github.com/ibb-jile/onroad-rc-simulator/issues/new"><span lang="cs">Poslat fotky přes GitHub</span><span lang="en">Send photos via GitHub</span></a>
+      <form id="track-form" novalidate data-state="idle">
+        <fieldset>
+          <div class="field">
+            <label for="tf-track"><span lang="cs">Název dráhy</span><span lang="en">Track name</span></label>
+            <input type="text" id="tf-track" name="track" required maxlength="120">
+          </div>
+          <div class="field">
+            <label for="tf-place"><span lang="cs">Místo (město, země)</span><span lang="en">Place (town, country)</span></label>
+            <input type="text" id="tf-place" name="place" maxlength="120">
+          </div>
+          <div class="field" role="group" aria-labelledby="tf-kind-l">
+            <span class="lbl" id="tf-kind-l"><span lang="cs">Typ dráhy</span><span lang="en">Track type</span></span>
+            <div class="choices">
+              <label for="tf-hala"><input type="radio" id="tf-hala" name="kind" value="hala"><span lang="cs">Hala (koberec)</span><span lang="en">Indoor (carpet)</span></label>
+              <label for="tf-venkovni"><input type="radio" id="tf-venkovni" name="kind" value="venkovni"><span lang="cs">Venkovní (asfalt)</span><span lang="en">Outdoor (asphalt)</span></label>
+            </div>
+          </div>
+          <div class="field">
+            <label for="tf-email"><span lang="cs">Tvůj e-mail</span><span lang="en">Your e-mail</span></label>
+            <input type="email" id="tf-email" name="email" required maxlength="200" autocomplete="email">
+          </div>
+          <div class="field">
+            <label for="tf-name"><span lang="cs">Jméno (nepovinné)</span><span lang="en">Name (optional)</span></label>
+            <input type="text" id="tf-name" name="name" maxlength="80" autocomplete="name">
+          </div>
+          <div class="field">
+            <label for="tf-note"><span lang="cs">Poznámka (rozměry, měřítko, směr jízdy)</span><span lang="en">Note (dimensions, scale, driving direction)</span></label>
+            <textarea id="tf-note" name="note" rows="4" maxlength="3000"></textarea>
+          </div>
+          <div class="field">
+            <label for="tf-photos"><span lang="cs">Fotky nebo nákres (1–8)</span><span lang="en">Photos or drawing (1–8)</span></label>
+            <input type="file" id="tf-photos" name="photos" accept="image/*" multiple required>
+          </div>
+          <div class="trap" aria-hidden="true"><input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true"></div>
+          <input type="hidden" name="started" value="">
+          <input type="hidden" name="lang" value="cs">
+          <p class="facts"><span lang="cs">E-mail a fotky použiju jen k přidání dráhy a k odpovědi. Fotky se před odesláním zmenší.</span><span lang="en">I will use your e-mail and photos only to add the track and to reply. Photos are downsized before sending.</span></p>
+          <button type="submit" class="cta cta-sm"><span lang="cs">Odeslat požadavek</span><span lang="en">Send request</span></button>
+        </fieldset>
+        <div class="form-status" role="status" aria-live="polite">
+          <span data-s="sending"><span lang="cs">Odesílám…</span><span lang="en">Sending…</span></span>
+          <span data-s="ok"><span lang="cs">Díky, požadavek dorazil. Ozvu se e-mailem.</span><span lang="en">Thanks, the request has arrived. I will reply by e-mail.</span></span>
+          <span data-s="err-fields"><span lang="cs">Vyplň prosím název dráhy a platný e-mail.</span><span lang="en">Please fill in the track name and a valid e-mail.</span></span>
+          <span data-s="err-photos"><span lang="cs">Přidej 1 až 8 fotek.</span><span lang="en">Add 1 to 8 photos.</span></span>
+          <span data-s="err-image"><span lang="cs">Některý obrázek se nepodařilo načíst. Zkus JPG nebo PNG.</span><span lang="en">One of the images could not be read. Try JPG or PNG.</span></span>
+          <span data-s="err-size"><span lang="cs">Fotky jsou i po zmenšení moc velké. Pošli jich méně.</span><span lang="en">The photos are too large even after downsizing. Send fewer of them.</span></span>
+          <span data-s="err-network"><span lang="cs">Odeslání se nepodařilo. Zkontroluj připojení a zkus to znovu.</span><span lang="en">Sending failed. Check your connection and try again.</span></span>
+          <span data-s="err-server"><span lang="cs">Na serveru se něco pokazilo. Zkus to později, nebo napiš přes GitHub.</span><span lang="en">Something went wrong on the server. Try again later, or write on GitHub.</span></span>
+        </div>
+      </form>
+      <p class="facts"><span lang="cs">Nebo napiš přes <a href="https://github.com/ibb-jile/onroad-rc-simulator/issues/new">GitHub</a>.</span><span lang="en">Or write on <a href="https://github.com/ibb-jile/onroad-rc-simulator/issues/new">GitHub</a>.</span></p>
     </div>
   </section>
 
@@ -555,6 +629,77 @@ footer .logo-sm { flex-basis: 100%; }
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(text).then(done, select);
     } else { select(); }
+  });
+})();
+</script>
+<script>
+// Formulář „Další dráhy na přání“: fotky se zmenší v prohlížeči a odešlou funkci /api/track-request.
+(function () {
+  var form = document.getElementById("track-form");
+  if (!form) return;
+  var btn = form.querySelector("button[type=submit]");
+  var box = form.querySelector("fieldset");
+  function state(s) { form.dataset.state = s; }
+  form.addEventListener("focusin", function () {
+    var f = form.elements.started;
+    if (!f.value) f.value = String(Date.now());
+  });
+  function load(file) {
+    function viaImage() {
+      return new Promise(function (ok, fail) {
+        var url = URL.createObjectURL(file), img = new Image();
+        img.onload = function () { URL.revokeObjectURL(url); ok(img); };
+        img.onerror = function () { URL.revokeObjectURL(url); fail(new Error("image")); };
+        img.src = url;
+      });
+    }
+    if (window.createImageBitmap) {
+      return createImageBitmap(file, { imageOrientation: "from-image" }).catch(viaImage);
+    }
+    return viaImage();
+  }
+  function shrink(file, max, q) {
+    return load(file).then(function (im) {
+      var w = im.width || im.naturalWidth, h = im.height || im.naturalHeight;
+      var k = Math.min(1, max / Math.max(w, h));
+      var c = document.createElement("canvas");
+      c.width = Math.max(1, Math.round(w * k)); c.height = Math.max(1, Math.round(h * k));
+      var g = c.getContext("2d");
+      g.fillStyle = "#fff"; g.fillRect(0, 0, c.width, c.height);
+      g.drawImage(im, 0, 0, c.width, c.height);
+      if (im.close) im.close();
+      return new Promise(function (ok, fail) {
+        c.toBlob(function (b) { b ? ok(b) : fail(new Error("image")); }, "image/jpeg", q);
+      });
+    });
+  }
+  function all(files, max, q) { return Promise.all(files.map(function (f) { return shrink(f, max, q); })); }
+  function sum(bl) { return bl.reduce(function (a, b) { return a + b.size; }, 0); }
+  function fits(bl) { return sum(bl) <= 3800000 && bl.every(function (b) { return b.size <= 1400000; }); }
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var files = Array.prototype.slice.call(form.elements.photos.files || []);
+    if (!form.elements.track.checkValidity() || !form.elements.email.checkValidity()) { state("err-fields"); return; }
+    if (files.length < 1 || files.length > 8) { state("err-photos"); return; }
+    form.elements.lang.value = document.documentElement.getAttribute("data-lang") === "en" ? "en" : "cs";
+    state("sending"); btn.disabled = true;
+    function fail(s) { state(s); btn.disabled = false; }
+    all(files, 1800, 0.82).then(function (bl) {
+      return fits(bl) ? bl : all(files, 1280, 0.72);
+    }).then(function (bl) {
+      if (!fits(bl)) { fail("err-size"); return; }
+      var fd = new FormData();
+      ["track", "place", "email", "name", "note", "website", "started", "lang"].forEach(function (n) { fd.append(n, form.elements[n].value); });
+      var kind = form.querySelector("input[name=kind]:checked");
+      fd.append("kind", kind ? kind.value : "");
+      bl.forEach(function (b, i) { fd.append("photos", b, (i + 1) + ".jpg"); });
+      return fetch("/api/track-request", { method: "POST", body: fd }).then(function (r) {
+        return r.json().catch(function () { return {}; }).then(function (j) {
+          if (r.ok && j.ok) { state("ok"); form.reset(); box.disabled = true; return; }
+          fail({ fields: "err-fields", photos: "err-photos", size: "err-size" }[j.error] || "err-server");
+        });
+      }, function () { fail("err-network"); });
+    }, function () { fail("err-image"); });
   });
 })();
 </script>
