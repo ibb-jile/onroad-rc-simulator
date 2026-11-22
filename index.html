@@ -131,6 +131,7 @@ p { margin: 0; }
 .cta:hover { filter: brightness(1.07); }
 .cta svg { width: 20px; height: 20px; }
 .facts { margin-top: 16px; color: var(--muted); font-size: 0.92rem; }
+.tip { margin-top: 14px; max-width: 34rem; padding-left: 14px; border-left: 3px solid var(--s3); color: var(--ink); font-size: 0.98rem; }
 
 /* tabule časů */
 .board { background: var(--surface); color: var(--ink); border: 1px solid var(--rule); border-radius: 12px; padding: 20px 22px 18px; font-family: var(--font-mono); }
@@ -190,6 +191,8 @@ section + section { border-top: 1px solid var(--rule); }
 .support { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 40px; align-items: center; }
 .support p { color: var(--muted); margin-top: 12px; max-width: 36rem; }
 .support .gh { margin-top: 20px; }
+.request p { color: var(--muted); margin-top: 12px; max-width: 36rem; }
+.request .gh { margin-top: 20px; }
 .donate { display: grid; gap: 10px; justify-items: center; text-align: center; }
 .donate img { width: 220px; height: 220px; background: #fff; padding: 8px; border-radius: 10px; border: 1px solid var(--rule); }
 .donate .amounts { display: flex; gap: 8px; }
@@ -246,6 +249,7 @@ footer .logo-sm { flex-basis: 100%; }
           <span lang="cs">Elektrický touring car 1/10 na kobercové trati. Motor a regulátor podle katalogu, setup jako na skutečném autě a vysílačka přes USB.</span>
           <span lang="en">An electric 1/10 touring car on a carpet track. Motor and ESC from catalogue data, a setup like on the real car, and your own transmitter over USB.</span>
         </p>
+        <p class="tip"><span lang="cs">Nejlépe si hru užiješ s připojenou RC vysílačkou. Jezdit jde i na klávesnici.</span><span lang="en">You'll enjoy the game most with your RC transmitter connected. The keyboard works too.</span></p>
         <div class="actions">
           <a class="cta" id="download" href="https://github.com/ibb-jile/onroad-rc-simulator/releases/latest/download/Onroad-RC-Simulator-macOS.zip">
             <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 3v10m0 0l-4-4m4 4l4-4M4 16h12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -434,6 +438,15 @@ footer .logo-sm { flex-basis: 100%; }
           <figcaption><span lang="cs">Menu (Esc): volby ve čtyřech záložkách – Jízda, Soupeři, Obraz, Zvuk a ovládání.</span><span lang="en">Menu (Esc): options in four tabs – Driving, Opponents, Display, Sound and controls.</span></figcaption>
         </figure>
       </div>
+    </div>
+  </section>
+
+  <section id="drahy">
+    <div class="wrap request">
+      <span class="strip strip-sm" aria-hidden="true"><i></i><i></i><i></i></span>
+      <h2><span lang="cs">Další dráhy na přání</span><span lang="en">More tracks on request</span></h2>
+      <p><span lang="cs">Chybí ti tvoje domácí dráha? Rád ji do hry přidám. Stačí pár fotek, na kterých je vidět celá dráha, ideálně i nákres v měřítku.</span><span lang="en">Missing your home track? I'll gladly add it to the game. A few photos showing the whole track are enough, ideally with a drawing to scale.</span></p>
+      <a class="btn-line gh" href="https://github.com/ibb-jile/onroad-rc-simulator/issues/new"><span lang="cs">Poslat fotky přes GitHub</span><span lang="en">Send photos via GitHub</span></a>
     </div>
   </section>
 
