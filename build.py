@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Složí index.html pro GitHub Pages ze src/page.html (obsah stránky bez <html>, <head> a <body>)."""
+"""Složí index.html ze src/page.html (obsah stránky bez <html>, <head> a <body>). Web běží na onroadrc.cz (Vercel), GitHub Pages jen přesměrovává."""
 import os
 
 here = os.path.dirname(os.path.abspath(__file__))
